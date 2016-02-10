@@ -61,6 +61,13 @@ def populate_database(all_entries):
             # this is almost always because of a failure of the unique constraint
             pdb.set_trace()
 
+
+def jaccard(A, B):
+    numer = 0
+    for a, b in zip(A, B):
+        numer += (a == b)
+    return numer / len(A)
+
                 
 def look_up(word: str, at_least_x_results = 3):
     word_h = db.get_hash(word)
@@ -74,7 +81,15 @@ def look_up(word: str, at_least_x_results = 3):
         else:
             break
 
-    similar = [s[0] for s in old]
+    similarity_scores = []
+    for word_and_hash in old:
+        w = word_and_hash[0]
+        h = word_and_hash[1:]
+        similarity_scores.append( (jaccard(word_h, h), w) )
+    
+    return sorted(similarity_scores)
+
+    
     return similar
 
 
