@@ -2,8 +2,22 @@ import re
 import binascii
 from database import Database
 from tqdm import tqdm
-from gutenberg.acquire import load_etext
-from gutenberg.cleanup import strip_headers
+try:
+    from gutenberg.acquire import load_etext
+    from gutenberg.cleanup import strip_headers
+
+    def acquire_and_process(name: str, txt_num: int):
+        """
+        Convenience function that minhashes a Project Gutenberg
+        text given the text id number (can be found on the gutenberg.org,
+        for instance in the url).
+        """
+        txt = strip_headers( load_etext(txt_num) )
+        with open("texts/%s.txt" % name, "w") as f:
+            f.write(txt)
+        process_file("texts/%s.txt" % name)
+except:
+    pass
 
 
 def load(pathname):
@@ -97,16 +111,3 @@ def process_file(fname, ngram_size = 10, hash_algorithms = 200):
     db = Database()
     db.save(fname, h)
     del db
-
-
-def acquire_and_process(name: str, txt_num: int):
-    """
-    Convenience function that minhashes a Project Gutenberg
-    text given the text id number (can be found on the gutenberg.org,
-    for instance in the url).
-    """
-    txt = strip_headers( load_etext(txt_num) )
-    with open("texts/%s.txt" % name, "w") as f:
-        f.write(txt)
-    process_file("texts/%s.txt" % name)
-
