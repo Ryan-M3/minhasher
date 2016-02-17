@@ -1,7 +1,6 @@
 import re
 import binascii
 from database import Database
-from tqdm import tqdm
 try:
     from gutenberg.acquire import load_etext
     from gutenberg.cleanup import strip_headers
