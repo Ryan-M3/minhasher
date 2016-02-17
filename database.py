@@ -33,7 +33,7 @@ class Database:
         self.crs.execute("""
           PRAGMA TABLE_INFO(hashes);
           """)
-        self.hash_n = len(self.crs.fetchall()) - 1  # -1 because the filename field
+        self.hash_n = len(self.crs.fetchall()) - 1  # -1 because the "name" field
 
 
     def save(self, name: str, minhashes: list):
