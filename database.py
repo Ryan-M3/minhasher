@@ -19,7 +19,7 @@ class Database:
         cols = ", ".join(cols)
 
         self.crs.execute("""
-          CREATE TABLE IF NOT EXISTS hashes (filename TEXT PRIMARY KEY, %s);
+          CREATE TABLE IF NOT EXISTS hashes (name TEXT PRIMARY KEY, %s);
           """ % cols)
         self.cnx.commit()
 
