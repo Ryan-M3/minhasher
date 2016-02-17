@@ -13,3 +13,13 @@ a SQLite database.
 This project also contains some of the functions I used to break the dict-
 ionary down into definitions for the purpose of minhashing. This is located
 in dict_parser.py.
+
+DEPENDENCIES:
+    main.py contains an optional dependency for the python package gutenberg
+    which allows you to download texts from project gutenberg. It's probably
+    not very important at all.
+
+    dict_parser.py also contains a dependency for tqdm, a library which makes
+    progress bars in the terminal. Since that file isn't really that import-
+    ant to anyone but the curious, I've not made an effort to remove that
+    dependency.
