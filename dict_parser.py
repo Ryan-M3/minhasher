@@ -41,21 +41,20 @@ def build_dict():
     return all_entries
 
 
-def populate_database(all_entries):
-    db = Database(minhash_length = 300, db_name = "dictionary_hashes.db")
+def populate_database(all_entries,
+                      db_name = "dictionary_hashes.db",
+                      hash_algorithms = 300,
+                      ngram_n = 2):
+    db = Database(minhash_length = hash_algorithms, db_name = db_name)
     clean = lambda s: " ".join(re.findall("[\w\ ]+", s)).strip().lower()
 
-    for i, k in enumerate(all_entries.keys()):
-        if i % 1000 == 0:
-            print(str(i/len(all_entries)).ljust(5), end="\t")
-            sys.stdout.flush()
-
+    for i, k in tqdm(enumerate(all_entries.keys())):
         clean_k = clean(k)
         clean_v = clean(all_entries[k])
 
         try:
-            ngrams = ngrammize( clean_v.split() )
-            h = minhash(ngrams, hash_algorithms = 300)
+            ngrams = ngrammize( clean_v.split(), ngram_n )
+            h = minhash(ngrams, hash_algorithms = hash_algorithms)
             db.save(clean_k, h)
         except:
             # this is almost always because of a failure of the unique constraint
@@ -73,13 +72,21 @@ def look_up(word: str, at_least_x_results = 3):
     word_h = db.get_hash(word)
 
     i = 1
+    first = True
     while True:
         similar = db.find_similar(word_h, rows_per_band = i)
+        if first and len(similar) < at_least_x_results:
+            old = copy(similar)
+            break
+        
+        first = False
+
         if len(similar) > at_least_x_results:
             old = copy(similar)
             i += 1
         else:
             break
+
 
     similarity_scores = []
     for word_and_hash in old:
@@ -93,4 +100,4 @@ def look_up(word: str, at_least_x_results = 3):
     return similar
 
 
-db = Database(minhash_length = 300, db_name = "dictionary_hashes.db")
+db = Database(minhash_length = 25, db_name = "new4gram_dict.db")
